@@ -68,6 +68,10 @@ func getid(c echo.Context) error {
 	}
 }
 
+func deleteMessage(key string) {
+	time.Sleep(time.Minute * 10)
+	idMessage.RemoveByKey(key)
+}
 
 // MessageParam は /api/hello が受けとるJSONパラメータを定義します。
 type MessageParam struct {
@@ -93,6 +97,8 @@ func postmessage(c echo.Context) error {
 	id := generateUniqueId()
 
 	idMessage.Set(id, message.Message)
+
+	go deleteMessage(id)
 
 	return c.JSON(http.StatusOK, map[string]string{"id": id})
 
