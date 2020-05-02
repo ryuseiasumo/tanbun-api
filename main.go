@@ -82,6 +82,14 @@ func postmessage(c echo.Context) error {
         return err
 	}
 
+	if message.Message == "" {
+		var apierr types.APIError
+		apierr.Code = 400
+		apierr.Message = "Bad Request"
+
+		return c.JSON(http.StatusBadRequest, apierr)
+	}
+
 	id := generateUniqueId()
 
 	idMessage.Set(id, message.Message)
