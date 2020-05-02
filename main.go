@@ -10,22 +10,25 @@ type safeMap struct {
   v map[string]string
 }
 
+func (m *safeMap) existKey(key string) bool {
+  _, ok := m.v[key]
+  return ok
+ }
+
 func (m *safeMap) get(key string) (string, error) {
-  return m.v[string]
+  return m.v[key]
 }
 
 func (m *safeMap) set(key string, value string) {
-  m.v[string] = value
+  m.v[key] = value
 }
 
 
 // map作成
-var id_message map[string]string
+var id_message safeMap
 
 func init() {
-	id_message = map[string]string{
-		"123456":
-	}
+	id_message.set("123456" , "ジョンソン")
 }
 
 func main() {
@@ -47,11 +50,18 @@ func main() {
 // Handler
 func getid(c echo.Context) error {
 	// 6桁のidを取得した時
-	id := c.QueryParam("id")
-
-	return c.JSON(http.StatusOK, map[string]string{
-        "id": id,
-	}
-
-	return c.JSON(http.StatusOK, map[string]interface{}{"hello": greetingto})
+  id := c.QueryParam("id")
+  if id_message.existKey(id) {
+    result = id_message.get(id)
+    return c.JSON(http.StatusOK, map[string]string{"message": result})
   }
+
+  else {
+    var apierr APIError
+    apierr.Code    = 404
+    apierr.Message = "Not Found"
+
+    c.JSON(htt.StatusBadRequest, apierr)
+    return err
+  }
+}
