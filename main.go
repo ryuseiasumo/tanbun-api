@@ -1,13 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/ryuseiasumo/tanbun-api/types"
-	"net/http"
-	"fmt"
-	"time"
 	"math/rand"
+	"net/http"
+	"time"
 )
 
 // map作成
@@ -22,12 +22,13 @@ func main() {
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-	e.Use(middleware.CORS())
-
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"https://quicker.netlify.app/"},
+		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
+	}))
 	rand.Seed(time.Now().UnixNano())
 
 	idMessage.Init()
-	idMessage.Set("123456", "ジョンソン")
 
 	// Routes
 	e.GET("/", getid)
@@ -37,21 +38,18 @@ func main() {
 	e.Logger.Fatal(e.Start(":80"))
 }
 
-
 func generateUniqueId() string {
 	var idtmp int
 	var idstr string
 
 	for {
 		idtmp = rand.Intn(1000000)
-		idstr = fmt.Sprintf("%06d",idtmp)
+		idstr = fmt.Sprintf("%06d", idtmp)
 		if !(idMessage.ExistKey(idstr)) {
 			return idstr
 		}
 	}
 }
-
-
 
 // Handler
 func getid(c echo.Context) error {
@@ -76,7 +74,7 @@ func deleteMessage(key string) {
 
 // MessageParam は /api/hello が受けとるJSONパラメータを定義します。
 type MessageParam struct {
-    Message string `json:"message"`
+	Message string `json:"message"`
 }
 
 func postmessage(c echo.Context) error {
@@ -84,7 +82,7 @@ func postmessage(c echo.Context) error {
 	message := new(MessageParam)
 
 	if err := c.Bind(message); err != nil {
-        return err
+		return err
 	}
 
 	if message.Message == "" {
