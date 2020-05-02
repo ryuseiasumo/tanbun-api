@@ -6,6 +6,18 @@ import (
   "github.com/labstack/echo/v4/middleware"
 )
 
+type safeMap struct {
+  v map[string]string
+}
+
+func (m *safeMap) get(key string) (string, error) {
+  return m.v[string]
+}
+
+func (m *safeMap) set(key string, value string) {
+  m.v[string] = value
+}
+
 
 // map作成
 var id_message map[string]string
