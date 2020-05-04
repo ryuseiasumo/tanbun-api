@@ -38,7 +38,7 @@ func main() {
 	e.Logger.Fatal(e.Start(":8080"))
 }
 
-func generateUniqueId() string {
+func generateUniqueID() string {
 	var idtmp int
 	var idstr string
 
@@ -58,13 +58,12 @@ func getid(c echo.Context) error {
 	if idMessage.ExistKey(id) {
 		result := idMessage.Get(id)
 		return c.JSON(http.StatusOK, map[string]string{"message": result})
-	} else {
-		var apierr types.APIError
-		apierr.Code = 404
-		apierr.Message = "Not Found"
-
-		return c.JSON(http.StatusNotFound, apierr)
 	}
+	var apierr types.APIError
+	apierr.Code = 404
+	apierr.Message = "Not Found"
+
+	return c.JSON(http.StatusNotFound, apierr)
 }
 
 func deleteMessage(key string) {
@@ -93,7 +92,7 @@ func postmessage(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, apierr)
 	}
 
-	id := generateUniqueId()
+	id := generateUniqueID()
 
 	idMessage.Set(id, message.Message)
 
