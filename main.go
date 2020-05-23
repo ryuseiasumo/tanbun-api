@@ -22,10 +22,33 @@ func main() {
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"https://quicker.netlify.app/"},
-		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
-	}))
+
+	// CORS
+    var allowedOrigins = []string{
+        "https://quicker.netlify.app",
+    }
+    e.Use(
+        middleware.CORSWithConfig(middleware.CORSConfig{
+            AllowCredentials: true,
+            AllowOrigins:     allowedOrigins,
+            AllowHeaders: []string{
+                echo.HeaderAccessControlAllowHeaders,
+                echo.HeaderContentType,
+                echo.HeaderContentLength,
+                echo.HeaderAcceptEncoding,
+                echo.HeaderXCSRFToken,
+                echo.HeaderAuthorization,
+            },
+            AllowMethods: []string{
+                http.MethodGet,
+                http.MethodPut,
+                http.MethodPatch,
+                http.MethodPost,
+                http.MethodDelete,
+            },
+            MaxAge: 86400,
+        }),
+    )
 	rand.Seed(time.Now().UnixNano())
 
 	idMessage.Init()
