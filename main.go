@@ -35,7 +35,7 @@ func main() {
 	e.POST("/", postmessage)
 
 	// Start server
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.StartTLS(":443", "/etc/letsencrypt/live/quicker.ml/fullchain.pem", "/etc/letsencrypt/live/quicker.ml/privkey.pem"))
 }
 
 func generateUniqueID() string {
